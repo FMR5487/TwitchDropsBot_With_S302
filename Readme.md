@@ -2,18 +2,18 @@
 
 带有 [Steamcommunity 302](https://www.dogfight360.com/blog/18682/) 的 [TwitchDropsBot](https://github.com/Alorf/TwitchDropsBot) 的Docker容器。  
 
+## 注意事项
+
+- **请自行前往 [TwitchDropsBot](https://github.com/Alorf/TwitchDropsBot/releases) 源项目下载程序运行自行生成配置文件放入./config目录下,否则Bot无法正常运行**
+- 容器需要 `NET_ADMIN` 能力以修改网络配置（302 需要）
+- `S302.ini` 已配置正确，如无需要请勿更改
+- 若 Bot 无法正确访问[Twitch](Twitch.tv)，适当增大 `START_DELAY` 值，查看代理是否启动成功
+
 ## 环境变量
 
 | 变量 | 默认值 | 说明 |
 |------|--------|------|
 | `START_DELAY` | `15` | 启动 Bot 前等待 302 代理就绪的秒数(留空为15秒) |
-
-## 注意事项
-
-- 请自行前往 [TwitchDropsBot](https://github.com/Alorf/TwitchDropsBot/releases) 源项目下载程序运行自行生成配置文件放入./config目录下,否则Bot无法正常运行
-- 容器需要 `NET_ADMIN` 能力以修改网络配置（302 需要）
-- `S302.ini` 已配置正确，如无需要请勿更改
-- 若 Bot 无法正确访问[Twitch](Twitch.tv)，适当增大 `START_DELAY` 值，查看代理是否启动成功
 
 ## 文件结构
 
@@ -22,7 +22,7 @@
 - ├── docker-compose.yaml
 - ├── config/ # 挂载目录，存放配置文件
 - │ ├── config.json # TwitchDropsBot 配置（需自行生成）
-- │ ├── S302.ini # 302 主配置（无需更改）
+- │ ├── S302.ini # 302 主配置（无需修改）
 - │ └── S302_rules.ini # 302 分流规则（供302程序更新规则的持久化存储）
 - ├── TwitchDropsBot/（Console-Linux）
 - └── S302/（Linux-cil）
@@ -38,7 +38,7 @@
 services:
   twitchdropsbots302:
     container_name: TwitchDropsBotS302
-    image: twitchdropsbots302
+    image: ghcr.io/fmr5487/TwitchDropsBot_With_S302:latest
     network_mode: "bridge"
     ports:
       - "8082:80"
