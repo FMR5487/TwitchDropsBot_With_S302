@@ -22,7 +22,7 @@
 - ├── docker-compose.yaml
 - ├── config/ # 挂载目录，存放配置文件
 - │ ├── config.json # TwitchDropsBot 配置（需自行生成）
-- │ ├── S302.ini # 302 主配置（无需更改）
+- │ ├── S302.ini # 302 主配置（无需修改）
 - │ └── S302_rules.ini # 302 分流规则（供302程序更新规则的持久化存储）
 - ├── TwitchDropsBot/（Console-Linux）
 - └── S302/（Linux-cil）
