@@ -38,7 +38,7 @@
 services:
   twitchdropsbots302:
     container_name: TwitchDropsBotS302
-    image: twitchdropsbots302
+    image: ghcr.io/fmr5487/TwitchDropsBot_With_S302:latest
     network_mode: "bridge"
     ports:
       - "8082:80"
