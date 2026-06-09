@@ -9,6 +9,11 @@
 - `S302.ini` 已配置正确，如无需要请勿更改
 - 若 Bot 无法正确访问[Twitch](Twitch.tv)，适当增大 `START_DELAY` 值，查看代理是否启动成功
 
+## 项目引用
+
+- [TwitchDropsBot by Alorf](https://github.com/Alorf/TwitchDropsBot)
+- [Steamcommunity 302 by Dogfight360](https://www.dogfight360.com/blog/18682/)
+
 ## 环境变量
 
 | 变量 | 默认值 | 说明 |
@@ -26,11 +31,6 @@
 - │ └── S302_rules.ini # 302 分流规则（供302程序更新规则的持久化存储）
 - ├── TwitchDropsBot/（Console-Linux）
 - └── S302/（Linux-cil）
-
-## 项目引用
-
-- [TwitchDropsBot by Alorf](https://github.com/Alorf/TwitchDropsBot)
-- [Steamcommunity 302 by Dogfight360](https://www.dogfight360.com/blog/18682/)
 
 ## docker-compose.yaml
 
