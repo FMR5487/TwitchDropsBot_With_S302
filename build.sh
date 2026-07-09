@@ -6,8 +6,9 @@ ACTION="$2"
 USERNAME="$3"
 
 if [ -z "$IMAGE_NAME_ARG" ]; then
-    echo "❌ Usage: $0 <image-name> [push] [github-username]"
-    echo "   Example: $0 twitchdropsbots302 push myuser"
+    echo "❌ Usage: $0 <image-name> [push|--push-only] [github-username]"
+    echo "   Example: $0 imagename push username"
+    echo "   Example: $0 imagename --push-only username"
     exit 1
 fi
 
@@ -17,11 +18,29 @@ if [ -n "$USERNAME" ]; then
         echo "🔗 Using GitHub Container Registry: $IMAGE_NAME"
     else
         IMAGE_NAME="$IMAGE_NAME_ARG"
-        echo "⚠️  Image name already contains '/', using as-is: $IMAGE_NAME"
     fi
 else
     IMAGE_NAME="$IMAGE_NAME_ARG"
-    echo "📦 Using local/Docker Hub image name: $IMAGE_NAME"
+fi
+
+push_image() {
+    echo "📤 Pushing image $IMAGE_NAME ..."
+    if ! docker push "$IMAGE_NAME"; then
+        echo "❌ Push failed! (but build was successful)"
+        return 1
+    fi
+    echo "✅ Push completed!"
+    return 0
+}
+
+if [ "$ACTION" = "--push-only" ]; then
+    echo "🚀 Push-only mode: pushing existing image $IMAGE_NAME"
+    if ! docker image inspect "$IMAGE_NAME" >/dev/null 2>&1; then
+        echo "❌ Image $IMAGE_NAME does not exist locally. Please build first."
+        exit 1
+    fi
+    push_image
+    exit $?
 fi
 
 echo "🚀 Building Docker image: $IMAGE_NAME"
@@ -29,24 +48,13 @@ echo "🚀 Building Docker image: $IMAGE_NAME"
 CACHEBUST=$(date +%s)
 docker build \
     --build-arg CACHEBUST="$CACHEBUST" \
-    --build-arg VERSION="$LATEST_VERSION" \
     -t "$IMAGE_NAME" \
     .
 
-echo "✅ Build completed successfully!"
+echo "✅ Build completed!"
 
 if [ "$ACTION" = "push" ]; then
-    if echo "$IMAGE_NAME" | grep -q '^ghcr.io/'; then
-        echo "📤 Pushing to GitHub Container Registry..."
-        REGISTRY_USER=$(echo "$IMAGE_NAME" | cut -d'/' -f2)
-        echo "ℹ️  Make sure you are logged in: docker login ghcr.io -u $REGISTRY_USER"
-    else
-        echo "📤 Pushing to default registry (Docker Hub)..."
-    fi
-    docker push "$IMAGE_NAME"
-    echo "✅ Push completed successfully!"
-else
-    echo "💡 To push this image, run: $0 $IMAGE_NAME_ARG push $USERNAME"
+    push_image
 fi
 
-echo "📦 Image: $IMAGE_NAME (based on version $LATEST_VERSION)"
+echo "📦 Image: $IMAGE_NAME (built with cache-bust $CACHEBUST)"
