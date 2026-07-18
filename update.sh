@@ -56,8 +56,6 @@ fi
 
 echo "🔄 Version mismatch or missing. Updating to $REMOTE_VERSION ..."
 
-[ -d "$LOCAL_DIR" ] && rm -rf "$LOCAL_DIR"
-
 PROXY_DOWNLOAD_URL="https://ghfast.top/$DOWNLOAD_URL"
 echo "⬇️  Downloading via proxy..."
 curl -L "$PROXY_DOWNLOAD_URL" -o "/tmp/$FILENAME" || {
@@ -70,7 +68,7 @@ curl -L "$PROXY_DOWNLOAD_URL" -o "/tmp/$FILENAME" || {
 
 TEMP_EXTRACT="/tmp/extract_$$"
 mkdir -p "$TEMP_EXTRACT"
-echo "📂 Extracting..."
+echo "📂 Extracting to temporary directory..."
 tar -xzf "/tmp/$FILENAME" -C "$TEMP_EXTRACT"
 
 EXTRACTED_DIR=$(tar -tzf "/tmp/$FILENAME" | head -1 | cut -f1 -d'/')
@@ -80,12 +78,17 @@ if [ -z "$EXTRACTED_DIR" ]; then
     exit 1
 fi
 
-mv "$TEMP_EXTRACT/$EXTRACTED_DIR" "./$LOCAL_DIR"
+if [ -d "$LOCAL_DIR" ]; then
+    echo "⚠️  Removing existing $LOCAL_DIR (new version is ready)..."
+    rm -rf "$LOCAL_DIR"
+fi
 
+mv "$TEMP_EXTRACT/$EXTRACTED_DIR" "./$LOCAL_DIR"
 VERSION_TAG="V-$REMOTE_VERSION"
 touch "$LOCAL_DIR/$VERSION_TAG"
 echo "🏷️  Created marker: $LOCAL_DIR/$VERSION_TAG"
 
+# 清理临时文件
 rm -rf "$TEMP_EXTRACT" "/tmp/$FILENAME"
 
 echo "🎉 Updated to version $REMOTE_VERSION in ./$LOCAL_DIR"
